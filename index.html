@@ -3,112 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Mystery Reward Challenge 🎁</title>
+  <title>The Mystery Reward Challenge</title>
   <style>
     body {
       font-family: "Poppins", sans-serif;
-      background: radial-gradient(circle at top, #111 0%, #000 100%);
+      background: radial-gradient(circle at center, #1e1e2f, #121212);
       color: #fff;
       text-align: center;
-      height: 100vh;
       margin: 0;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      overflow: hidden;
+      justify-content: center;
     }
 
     h1 {
-      font-size: 3rem;
-      color: #ffcc00;
-      text-shadow: 0 0 20px #ffcc00;
-      margin-bottom: 0.5rem;
-      animation: glow 2s infinite alternate;
+      font-size: 3em;
+      margin-bottom: 10px;
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
     @keyframes glow {
-      from { text-shadow: 0 0 10px #ffcc00; }
-      to { text-shadow: 0 0 25px #ffcc00, 0 0 50px #ff6600; }
+      from { text-shadow: 0 0 10px #ff7b00, 0 0 20px #ff5500; }
+      to { text-shadow: 0 0 20px #ffcc00, 0 0 30px #ff6600; }
     }
 
-    .tap-btn {
-      background: linear-gradient(45deg, #ff6600, #ffcc00);
-      color: #000;
-      font-weight: bold;
+    button {
+      font-size: 1.5em;
+      background: linear-gradient(90deg, #ff7b00, #ffcc00);
       border: none;
       border-radius: 12px;
-      padding: 18px 36px;
-      font-size: 1.5rem;
+      color: #111;
+      padding: 15px 40px;
       cursor: pointer;
-      transition: transform 0.1s ease, box-shadow 0.2s ease;
-      box-shadow: 0 0 10px #ffcc00;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 20px;
     }
 
-    .tap-btn:hover {
+    button:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 25px #ffcc00, 0 0 50px #ff6600;
+      box-shadow: 0 0 20px #ffcc00;
     }
 
-    .leaderboard {
-      margin-top: 30px;
-      width: 80%;
-      max-width: 600px;
-      text-align: left;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 10px 20px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-
-    .leaderboard h2 {
-      text-align: center;
-      color: #ffcc00;
-      text-shadow: 0 0 15px #ffcc00;
-    }
-
-    .leaderboard ol {
-      list-style: none;
-      padding: 0;
-    }
-
-    .leaderboard li {
-      margin: 8px 0;
-      font-size: 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding-bottom: 5px;
-    }
-
-    .reward {
-      font-size: 1.3rem;
-      color: #00ff99;
-      text-shadow: 0 0 10px #00ff99;
+    #reward {
+      font-size: 2.5em;
       margin-top: 20px;
       opacity: 0;
-      transition: opacity 0.8s;
+      transition: opacity 1s ease;
     }
 
-    .reward.show {
-      opacity: 1;
+    #leaderboard {
+      margin-top: 40px;
+      width: 80%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(255, 200, 0, 0.4);
+    }
+
+    #leaderboard h2 {
+      margin-bottom: 10px;
+      font-size: 1.8em;
+      color: #ffcc00;
+    }
+
+    ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      font-size: 1.2em;
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 4px;
+    }
+
+    .rank {
+      color: #ffcc00;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9em;
+      opacity: 0.6;
     }
   </style>
 </head>
 <body>
-  <h1>The Mystery Reward Challenge 🎁</h1>
-  <button class="tap-btn" id="tapBtn">Tap to Reveal Reward</button>
-  <div class="reward" id="reward"></div>
+  <h1>The Mystery Reward 🎁</h1>
+  <p>Tap the button below and try your luck!</p>
+  <button id="rewardBtn">Reveal Reward</button>
+  <div id="reward"></div>
 
-  <div class="leaderboard">
-    <h2>🏆 Leaderboard</h2>
+  <div id="leaderboard">
+    <h2>🏆 Top 10 Leaderboard</h2>
     <ol id="leaderboardList"></ol>
   </div>
 
+  <footer>Powered by Firebase & Camille's Mystery Game ✨</footer>
+
   <script type="module">
-    // ✅ Import Firebase SDK
+    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, push, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     // ✅ Firebase config here
     const firebaseConfig = {
@@ -121,63 +129,65 @@
       measurementId: "G-T3EM6RKRPC"
     };
 
-    // ✅ Initialize Firebase
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const tapBtn = document.getElementById("tapBtn");
-    const rewardEl = document.getElementById("reward");
+    const rewardBtn = document.getElementById("rewardBtn");
+    const rewardDiv = document.getElementById("reward");
     const leaderboardList = document.getElementById("leaderboardList");
 
     const rewards = [
-      "🎉 Free Coffee Voucher!",
-      "🍕 Pizza Treat!",
-      "🎮 Game Credits!",
+      "🎉 Extra 5 Points!",
+      "🍫 Free Chocolate!",
+      "☕ Free Coffee!",
+      "🎟️ Bonus Entry Ticket!",
+      "⭐ Double Points Next Round!",
+      "🎧 Music Break Pass!",
+      "🍀 Lucky Draw Chance!",
       "🎁 Mystery Box!",
-      "☕ Starbucks Gift Card!",
-      "🎟 Movie Ticket!",
-      "📱 Phone Wallpaper Pack!",
-      "💡 Special Shoutout!",
-      "🔥 Bonus Points!",
-      "🎧 Music Subscription!"
+      "🥤 Free Drink!",
+      "💎 Golden Badge!"
     ];
 
-    tapBtn.addEventListener("click", async () => {
-      const playerName = prompt("Enter your name to reveal your reward 🎯");
+    function showReward() {
+      const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+      rewardDiv.textContent = randomReward;
+      rewardDiv.style.opacity = 1;
+
+      // Save to Firebase with timestamp and random score
+      const playerName = prompt("Enter your name to save your reward:");
       if (!playerName) return;
 
-      const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+      const randomScore = Math.floor(Math.random() * 1000) + 1;
 
-      rewardEl.textContent = `You got: ${randomReward}`;
-      rewardEl.classList.add("show");
-
-      // Save to Firebase
-      const rewardRef = ref(db, "rewards");
-      await push(rewardRef, { name: playerName, reward: randomReward, timestamp: Date.now() });
-
-      // Refresh leaderboard
-      loadLeaderboard();
-    });
-
-    async function loadLeaderboard() {
-      const rewardRef = query(ref(db, "rewards"), orderByChild("timestamp"), limitToLast(10));
-      const snapshot = await get(rewardRef);
-
-      leaderboardList.innerHTML = "";
-      if (snapshot.exists()) {
-        const rewards = Object.values(snapshot.val()).reverse();
-        rewards.forEach((r, i) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<span>${i + 1}. ${r.name}</span> <span>${r.reward}</span>`;
-          leaderboardList.appendChild(li);
-        });
-      } else {
-        leaderboardList.innerHTML = "<li>No entries yet.</li>";
-      }
+      push(ref(db, "leaderboard"), {
+        name: playerName,
+        reward: randomReward,
+        score: randomScore,
+        time: new Date().toISOString()
+      });
     }
 
-    // Load leaderboard on page start
-    loadLeaderboard();
+    rewardBtn.addEventListener("click", showReward);
+
+    // Realtime leaderboard (Top 10)
+    onValue(ref(db, "leaderboard"), (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const entries = Object.values(data);
+      const top10 = entries
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10);
+
+      leaderboardList.innerHTML = "";
+      top10.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="rank">#${index + 1}</span> ${entry.name} <span>${entry.score}</span>`;
+        leaderboardList.appendChild(li);
+      });
+    });
   </script>
 </body>
 </html>
