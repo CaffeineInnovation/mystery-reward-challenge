@@ -107,8 +107,15 @@
   <div id="message"></div>
 
   <div id="leaderboard">
-    <h2>🏆 Top 3 Scores</h2>
+    <h2>🏆 Top 10 Scores</h2>
     <ol id="scoresList">
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
       <li>---</li>
       <li>---</li>
       <li>---</li>
@@ -237,7 +244,7 @@
 
     async function loadLeaderboard() {
       const leaderboard = document.getElementById("leaderboard");
-      const scoresRef = query(ref(db, "scores"), orderByChild("score"), limitToLast(3));
+      const scoresRef = query(ref(db, "scores"), orderByChild("score"), limitToLast(10));
     
       try {
         const snapshot = await get(scoresRef);
