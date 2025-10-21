@@ -236,19 +236,38 @@
     }
 
     async function loadLeaderboard() {
+      const leaderboard = document.getElementById("leaderboard");
       const scoresRef = query(ref(db, "scores"), orderByChild("score"), limitToLast(3));
-      const snapshot = await get(scoresRef);
-      scoresList.innerHTML = "";
-      if (snapshot.exists()) {
+    
+      try {
+        const snapshot = await get(scoresRef);
+    
+        if (!snapshot.exists()) {
+          // Hide leaderboard if there's no data
+          leaderboard.style.display = "none";
+          return;
+        }
+    
         const scoresArray = Object.values(snapshot.val())
+          .filter(s => s && typeof s.score === "number")
           .sort((a, b) => b.score - a.score);
+    
+        if (scoresArray.length === 0) {
+          leaderboard.style.display = "none";
+          return;
+        }
+    
+        // Show leaderboard and populate
+        leaderboard.style.display = "block";
+        scoresList.innerHTML = "";
         scoresArray.forEach((s) => {
           const li = document.createElement("li");
-          li.textContent = `${s.name}: ${s.score}`;
+          li.textContent = `${s.name || "Anonymous"}: ${s.score}`;
           scoresList.appendChild(li);
         });
-      } else {
-        scoresList.innerHTML = "<li>---</li><li>---</li><li>---</li>";
+      } catch (err) {
+        console.error("Error loading leaderboard:", err);
+        leaderboard.style.display = "none";
       }
     }
 
