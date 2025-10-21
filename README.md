@@ -45,8 +45,9 @@ Built using **HTML, CSS, JavaScript**, and **Firebase Realtime Database**, this 
    const firebaseConfig = {
       apiKey: "AIzaSyB1l0OT66U8Qm_o9Q-OqwG2yvQ0A2NjqMc",
       authDomain: "mystery-reward.firebaseapp.com",
+      databaseURL: "https://mystery-reward-default-rtdb.firebaseio.com",
       projectId: "mystery-reward",
-      storageBucket: "mystery-reward.firebasestorage.app",
+      storageBucket: "mystery-reward.appspot.com",
       messagingSenderId: "671463270943",
       appId: "1:671463270943:web:49d87ae2c3053788e8c32a",
       measurementId: "G-T3EM6RKRPC"
