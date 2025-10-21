@@ -151,7 +151,7 @@
     };
 
     window.onload = async () => {
-      playerName = prompt("Enter your name for the leaderboard:")?.trim() || "Player";
+      playerName = prompt("Enter your name for the leaderboard:")?.trim() || "Anonymous";
       await loadLeaderboard();
       button.textContent = "Start Game";
       button.disabled = false;
@@ -241,13 +241,6 @@
     
       try {
         const snapshot = await get(scoresRef);
-    
-        if (!snapshot.exists()) {
-          // Hide leaderboard if there's no data
-          leaderboard.style.display = "none";
-          return;
-        }
-    
         const scoresArray = Object.values(snapshot.val())
           .filter(s => s && typeof s.score === "number")
           .sort((a, b) => b.score - a.score);
