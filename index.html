@@ -5,189 +5,256 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Mystery Reward Challenge</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap');
     body {
-      font-family: "Poppins", sans-serif;
-      background: radial-gradient(circle at center, #1e1e2f, #121212);
+      font-family: "Poppins", Arial, sans-serif;
+      background: radial-gradient(circle at center, #1c1c1c, #111);
       color: #fff;
       text-align: center;
-      margin: 0;
       height: 100vh;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      margin: 0;
+      overflow: hidden;
+      animation: bgPulse 6s infinite alternate ease-in-out;
     }
-
+    @keyframes bgPulse {
+      from { background: radial-gradient(circle at center, #1c1c1c, #111); }
+      to { background: radial-gradient(circle at center, #282828, #111); }
+    }
     h1 {
-      font-size: 3em;
       margin-bottom: 10px;
-      animation: glow 2s ease-in-out infinite alternate;
+      font-size: 4rem;
+      color: #ffcc00;
+      text-shadow: 0 0 20px #ffcc00, 0 0 40px #ffcc00;
+      animation: glow 2s infinite ease-in-out alternate;
     }
-
     @keyframes glow {
-      from { text-shadow: 0 0 10px #ff7b00, 0 0 20px #ff5500; }
-      to { text-shadow: 0 0 20px #ffcc00, 0 0 30px #ff6600; }
+      from { text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00; }
+      to { text-shadow: 0 0 20px #ffe680, 0 0 50px #ffcc00; }
     }
-
-    button {
-      font-size: 1.5em;
-      background: linear-gradient(90deg, #ff7b00, #ffcc00);
+    #score, #timer {
+      font-size: 2.5rem;
+      margin: 12px 0;
+      letter-spacing: 1px;
+      animation: fadeIn 1s ease forwards;
+    }
+    #button {
+      background: linear-gradient(135deg, #ffcc00, #ffdd33);
       border: none;
-      border-radius: 12px;
-      color: #111;
-      padding: 15px 40px;
+      padding: 25px 80px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      border-radius: 20px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 0 #cc9900;
       margin-top: 20px;
     }
-
-    button:hover {
+    #button:hover:not(:disabled) {
       transform: scale(1.1);
-      box-shadow: 0 0 20px #ffcc00;
+      background: linear-gradient(135deg, #ffe680, #fff176);
+      box-shadow: 0 10px 20px rgba(255, 204, 0, 0.4);
     }
-
-    #reward {
-      font-size: 2.5em;
-      margin-top: 20px;
-      opacity: 0;
-      transition: opacity 1s ease;
+    #button:disabled {
+      background: #777;
+      box-shadow: none;
+      cursor: not-allowed;
     }
-
+    #message {
+      margin-top: 25px;
+      font-size: 2rem;
+      min-height: 2.2em;
+      transition: color 0.3s, transform 0.3s;
+    }
     #leaderboard {
       margin-top: 40px;
-      width: 80%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
+      text-align: left;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.08);
       padding: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 15px rgba(255, 200, 0, 0.4);
+      border-radius: 16px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      animation: slideUp 1s ease forwards;
     }
-
     #leaderboard h2 {
-      margin-bottom: 10px;
-      font-size: 1.8em;
-      color: #ffcc00;
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #ffcc00;
+      padding-bottom: 5px;
+      text-shadow: 0 0 10px #ffcc00;
     }
-
-    ol {
-      list-style: none;
-      padding: 0;
+    #leaderboard ol {
+      padding-left: 25px;
       margin: 0;
+      font-size: 1.5rem;
+      line-height: 1.6;
     }
-
-    li {
-      font-size: 1.2em;
-      margin: 8px 0;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 4px;
-    }
-
-    .rank {
-      color: #ffcc00;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    footer {
-      position: absolute;
-      bottom: 10px;
-      font-size: 0.9em;
-      opacity: 0.6;
-    }
+    .flash { animation: flash 0.3s ease; }
+    @keyframes flash { 0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);} }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(50px);}to{opacity:1;transform:translateY(0);} }
   </style>
 </head>
 <body>
-  <h1>The Mystery Reward 🎁</h1>
-  <p>Tap the button below and try your luck!</p>
-  <button id="rewardBtn">Reveal Reward</button>
-  <div id="reward"></div>
+  <h1>🎰 The Mystery Reward Challenge 🎰</h1>
+  <div id="timer">⏱ Time: 15s</div>
+  <div id="score">💎 Score: 0</div>
+  <button id="button" disabled>Loading...</button>
+  <div id="message"></div>
 
   <div id="leaderboard">
-    <h2>🏆 Top 10 Leaderboard</h2>
-    <ol id="leaderboardList"></ol>
+    <h2>🏆 Top 3 Scores</h2>
+    <ol id="scoresList">
+      <li>---</li>
+      <li>---</li>
+      <li>---</li>
+    </ol>
   </div>
 
-  <footer>Powered by Firebase & Camille's Mystery Game ✨</footer>
-
   <script type="module">
-    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, push, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // ✅ Firebase config here
+    // ✅ Replace this with your Firebase config
     const firebaseConfig = {
-      apiKey: "AIzaSyB1l0OT66U8Qm_o9Q-OqwG2yvQ0A2NjqMc",
-      authDomain: "mystery-reward.firebaseapp.com",
-      projectId: "mystery-reward",
-      storageBucket: "mystery-reward.firebasestorage.app",
-      messagingSenderId: "671463270943",
-      appId: "1:671463270943:web:49d87ae2c3053788e8c32a",
-      measurementId: "G-T3EM6RKRPC"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const rewardBtn = document.getElementById("rewardBtn");
-    const rewardDiv = document.getElementById("reward");
-    const leaderboardList = document.getElementById("leaderboardList");
+    const button = document.getElementById("button");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const message = document.getElementById("message");
+    const scoresList = document.getElementById("scoresList");
 
-    const rewards = [
-      "🎉 Extra 5 Points!",
-      "🍫 Free Chocolate!",
-      "☕ Free Coffee!",
-      "🎟️ Bonus Entry Ticket!",
-      "⭐ Double Points Next Round!",
-      "🎧 Music Break Pass!",
-      "🍀 Lucky Draw Chance!",
-      "🎁 Mystery Box!",
-      "🥤 Free Drink!",
-      "💎 Golden Badge!"
-    ];
+    let score = 0;
+    let timeLeft = 15;
+    let timerInterval;
+    let gameActive = false;
+    let playerName = "";
+    const sounds = {
+      win: new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"),
+      miss: new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg")
+    };
 
-    function showReward() {
-      const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
-      rewardDiv.textContent = randomReward;
-      rewardDiv.style.opacity = 1;
-
-      // Save to Firebase with timestamp and random score
-      const playerName = prompt("Enter your name to save your reward:");
-      if (!playerName) return;
-
-      const randomScore = Math.floor(Math.random() * 1000) + 1;
-
-      push(ref(db, "leaderboard"), {
-        name: playerName,
-        reward: randomReward,
-        score: randomScore,
-        time: new Date().toISOString()
+    window.onload = async () => {
+      playerName = prompt("Enter your name for the leaderboard:")?.trim() || "Player";
+      await loadLeaderboard();
+      button.textContent = "Start Game";
+      button.disabled = false;
+      button.addEventListener("click", () => {
+        if (!gameActive) startGame();
       });
+    };
+
+    function startGame() {
+      score = 0;
+      timeLeft = 15;
+      gameActive = true;
+      message.textContent = "";
+      scoreDisplay.textContent = "💎 Score: 0";
+      button.textContent = "Tap to Earn!";
+      button.disabled = false;
+      clearInterval(timerInterval);
+      timerDisplay.textContent = `⏱ Time: ${timeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `⏱ Time: ${timeLeft}s`;
+        timerDisplay.classList.add("flash");
+        setTimeout(() => timerDisplay.classList.remove("flash"), 200);
+        if (timeLeft <= 0) endGame();
+      }, 1000);
     }
 
-    rewardBtn.addEventListener("click", showReward);
+    button.addEventListener("click", () => {
+      if (!gameActive) return;
+      const rand = Math.random();
+      let reward = 0;
+      if (rand < 0.1) reward = -1;
+      else if (rand < 0.6) reward = 1;
+      else if (rand < 0.85) reward = 5;
 
-    // Realtime leaderboard (Top 10)
-    onValue(ref(db, "leaderboard"), (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
+      if (reward > 0) {
+        score += reward;
+        message.textContent = `🎉 +${reward} points!`;
+        message.style.color = "#00ff99";
+        message.style.transform = "scale(1.2)";
+        setTimeout(() => (message.style.transform = "scale(1)"), 200);
+        playSound(sounds.win);
+      } else if (reward === -1) {
+        score = Math.max(0, score - 1);
+        message.textContent = "😬 Oops! -1";
+        message.style.color = "#ff4444";
+        playSound(sounds.miss);
+      } else {
+        message.textContent = "😅 No reward";
+        message.style.color = "#ffcc00";
+        playSound(sounds.miss);
+      }
 
-      const entries = Object.values(data);
-      const top10 = entries
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-
-      leaderboardList.innerHTML = "";
-      top10.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span class="rank">#${index + 1}</span> ${entry.name} <span>${entry.score}</span>`;
-        leaderboardList.appendChild(li);
-      });
+      button.classList.add("flash");
+      setTimeout(() => button.classList.remove("flash"), 200);
+      scoreDisplay.textContent = `💎 Score: ${score}`;
     });
+
+    async function endGame() {
+      clearInterval(timerInterval);
+      gameActive = false;
+      button.disabled = true;
+      button.textContent = "Game Over";
+      message.textContent = `🎊 ${playerName}, your final score: ${score}!`;
+      message.style.color = "#ffcc00";
+
+      // ✅ Save score to Firebase
+      const scoresRef = ref(db, "scores");
+      await push(scoresRef, {
+        name: playerName,
+        score,
+        timestamp: Date.now()
+      });
+
+      await loadLeaderboard();
+
+      setTimeout(() => {
+        button.textContent = "Play Again";
+        button.disabled = false;
+      }, 2000);
+    }
+
+    async function loadLeaderboard() {
+      const scoresRef = query(ref(db, "scores"), orderByChild("score"), limitToLast(3));
+      const snapshot = await get(scoresRef);
+      scoresList.innerHTML = "";
+      if (snapshot.exists()) {
+        const scoresArray = Object.values(snapshot.val())
+          .sort((a, b) => b.score - a.score);
+        scoresArray.forEach((s) => {
+          const li = document.createElement("li");
+          li.textContent = `${s.name}: ${s.score}`;
+          scoresList.appendChild(li);
+        });
+      } else {
+        scoresList.innerHTML = "<li>---</li><li>---</li><li>---</li>";
+      }
+    }
+
+    function playSound(sound) {
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
+    }
   </script>
 </body>
 </html>
